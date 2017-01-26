@@ -53,7 +53,10 @@ router.get("/talks", (req, res) => {
     return titlePass && speakerPass && ratingPass;
   });
 
-  res.json({talks: filteredTalks});
+  const talks = filteredTalks.reduce((acc, t) => (acc[t.id] = t, acc), {});
+  const list = filteredTalks.map(t => t.id);
+
+  res.json({talks, list});
 });
 
 router.get("/talk", (req, res) => {

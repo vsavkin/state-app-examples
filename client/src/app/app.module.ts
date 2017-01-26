@@ -9,13 +9,12 @@ import { TalkCmp } from './talk/talk';
 import { WatchButtonCmp } from './watch-button/watch-button';
 import { RateButtonCmp } from './rate-button/rate-button';
 import { FormatRatingPipe } from './pipes/format-rating.pipe';
-import {createFiltersObject} from "./model";
 import {Backend} from "./backend";
 import { FiltersCmp } from './filters/filters';
 import {RouterModule} from "@angular/router";
 import {TalksAndFiltersCmp} from "./talks-and-filters/talks-and-filters";
 import {TalkDetailsCmp} from "./talk-details/talk-details";
-import {HttpModule, Http} from "@angular/http";
+import {HttpModule} from "@angular/http";
 import {WatchService} from "./watch";
 
 @NgModule({
@@ -36,14 +35,14 @@ import {WatchService} from "./watch";
     HttpModule,
     MaterialModule.forRoot(),
     RouterModule.forRoot([
-      { path: '',  pathMatch: 'full', component: TalksAndFiltersCmp },
+      { path: '',  pathMatch: 'full', redirectTo: 'talks'},
+      { path: 'talks',  component: TalksAndFiltersCmp },
       { path: 'talk/:id', component: TalkDetailsCmp }
     ], {useHash: true}),
   ],
   providers: [
     Backend,
-    WatchService,
-    { provide: 'createFiltersObject', useValue: createFiltersObject }
+    WatchService
   ],
   bootstrap: [AppCmp]
 })

@@ -18,7 +18,7 @@ export class TalkDetailsCmp {
   }
 
   handleRate(newRating: number): void {
-    this.backend.rateTalk(this.talk, newRating);
+    this.backend.rateTalk(this.talk.id, newRating);
   }
 
   handleWatch(): void {

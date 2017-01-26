@@ -14,7 +14,7 @@ export class FiltersCmp {
     this.filtersForm.setValue({
       title: v.title,
       speaker: v.speaker,
-      highRating: v.rating > 9
+      highRating: v.minRating >= 9
     }, {emitEvent: false});
   }
 
@@ -24,9 +24,11 @@ export class FiltersCmp {
     highRating: new FormControl(false),
   });
 
-  constructor(@Inject('createFiltersObject') createFilters: Function) {
+  constructor() {
     this.filtersForm.valueChanges.debounceTime(200).subscribe((value) => {
-      this.filtersChange.next(createFilters(value));
+      const minRating = value.highRating ? 9 : 0;
+      const filters = {speaker: value.speaker || null, title: value.title || null, minRating};
+      this.filtersChange.next(filters);
     });
   }
 }
