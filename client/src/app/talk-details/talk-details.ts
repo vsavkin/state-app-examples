@@ -1,9 +1,8 @@
 import {Component, Input} from "@angular/core";
-import {Backend} from "../backend";
 import {ActivatedRoute} from "@angular/router";
 import 'rxjs/add/operator/mergeMap';
-import {WatchService} from "../watch";
-import {Talk} from "../model";
+import {Talk, State, Action} from "../model";
+import {Store} from "../store";
 
 @Component({
   selector: 'talk-details-cmp',
@@ -11,17 +10,35 @@ import {Talk} from "../model";
   styleUrls: ['./talk-details.css']
 })
 export class TalkDetailsCmp {
-  talk: Talk;
+  constructor(private store: Store<State, Action>, private route: ActivatedRoute) {
+    route.params.forEach(p => {
+      this.store.sendAction({
+        type: 'SHOW_DETAIL',
+        talkId: p['id']
+      });
+    });
+  }
 
-  constructor(private backend: Backend, public watchService: WatchService, private route: ActivatedRoute) {
-    route.params.mergeMap(p => this.backend.findTalk(+p['id'])).subscribe(t => this.talk = t);
+  get talk(): Talk {
+    return this.store.state.talks[+this.route.snapshot.params['id']];
+  }
+
+  get watched(): boolean {
+    return this.store.state.watched[+this.route.snapshot.params['id']];
   }
 
   handleRate(newRating: number): void {
-    this.backend.rateTalk(this.talk, newRating);
+    this.store.sendAction({
+      type: 'RATE',
+      talkId: this.talk.id,
+      rating: newRating
+    });
   }
 
   handleWatch(): void {
-    this.watchService.watch(this.talk);
+    this.store.sendAction({
+      type: 'WATCH',
+      talkId: this.talk.id
+    });
   }
 }
